@@ -225,7 +225,8 @@ class Game(object):
 
 
 if __name__ == '__main__':
-    GAME = Game("10.0.0.200", 1337)
+    GAME = Game('matelight.cbrp3.c-base.org', 1337)
+    #GAME = Game('127.0.0.1', 1337)
     GAMELOOP = True
     while(GAMELOOP):
         GAMELOOP = GAME.run()
