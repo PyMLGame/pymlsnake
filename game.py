@@ -7,6 +7,7 @@ Snake for Mate Light
 
 This is a clone of the well known snake game for Mate Light using pymlgame.
 """
+import time
 
 __author__ = 'Ricardo Band'
 __copyright__ = 'Copyright 2014, Ricardo Band'
@@ -51,8 +52,6 @@ class Game(object):
         self.oldapple = self.apple
         self.score = 0
         self.highscore = self.get_highscore()
-
-        self.reset()
 
     def update(self):
         """
@@ -126,20 +125,33 @@ class Game(object):
             print('current highscore:', self.highscore)
             if self.score > int(self.highscore):
                 self.write_highscore()
+
+            end = time.time() + 5
+            while time.time() < end:
+                self.screen.reset()
+                surface = pymlgame.Surface(self.width, self.height)
+                #TODO: write score and highscore
+                #font = pymlgame.font('score: {}'.format(self.score),
+                #                     pymlgame.WHITE, pymlgame.BLACK)
+                if self.score > self.highscore:
+                    #surface.blit(font, (0, int(self.height / 2) - 1 -
+                    #                       font.surface.height))
+                    #new = pymlgame.font('new highscore!', pymlgame.WHITE,
+                    #                    pymlgame.BLACK)
+                    #surface.blit(new, (0, int(self.height / 2) + 1))
+                    pass
+                else:
+                    #surface.blit(font, (0, int(self.height / 2) - 1 -
+                    #                       int(font.surface.height / 2)))
+                    pass
+
+                self.screen.blit(surface)
+                self.screen.update()
+                self.clock.tick(5)
+
         except KeyboardInterrupt:
             pass
         self.ctlr.quit()
-
-    def reset(self):
-        """
-        Reset the game
-        """
-        self.score = 0
-        self.highscore = self.get_highscore()
-        self.gameover = False
-
-        self.snake.reset()
-        self.apple = self.generate_apple()
 
     def generate_apple(self):
         return (random.randrange(self.width),

@@ -28,20 +28,9 @@ class Snake(object):
         """
         Create a snake with its initial parts and direction.
         """
-        self.recover = (parts, direction)
         self.parts = parts  # last part is head
         self.direction = direction
         self.dimensions = dimensions
-        self.grow = False
-
-        self.reset()
-
-    def reset(self):
-        """
-        Reset the snake to their initial state
-        """
-        self.parts = self.recover[0]
-        self.direction = self.recover[1]
         self.grow = False
 
     def get_pos(self):
