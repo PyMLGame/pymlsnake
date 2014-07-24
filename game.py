@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -7,17 +7,17 @@ Snake for Mate Light
 
 This is a clone of the well known snake game for Mate Light using pymlgame.
 """
-import time
 
 __author__ = 'Ricardo Band'
 __copyright__ = 'Copyright 2014, Ricardo Band'
 __credits__ = ['Ricardo Band']
 __license__ = 'MIT'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Ricardo Band'
 __email__ = 'me@xengi.de'
 __status__ = 'Development'
 
+import time
 import random
 
 import pymlgame
@@ -29,22 +29,17 @@ class Game(object):
     """
     The main game class that holds the gameloop.
     """
-    def __init__(self, host, port, width, height):
+    def __init__(self, mlhost, mlport):
         """
         Create a screen and define some game specific things.
         """
-        self.host = host
-        self.port = port
-        self.width = width
-        self.height = height
-        self.screen = pymlgame.Screen(self.host, self.port,
-                                      self.width, self.height)
-        self.clock = pymlgame.Clock()
-        self.ctlr = pymlgame.Controller(self.host, self.port + 1)
+        pymlgame.init()
+        self.screen = pymlgame.Screen(mlhost, mlport, 40, 16)
+        self.clock = pymlgame.Clock(15)
 
-        part = (int(self.width / 2), int(self.height / 2))
+        part = (int(self.screen.width / 2), int(self.screen.height / 2))
         self.snake = Snake([(part[0] - 2, part[1]), (part[0] - 1, part[1]),
-                            part], RIGHT, (self.width, self.height))
+                            part], RIGHT, (self.screen.width, self.screen.height))
         self.gameover = False
         self.apple = self.generate_apple()
         self.apple_surface = pymlgame.Surface(1, 1)
@@ -72,7 +67,7 @@ class Game(object):
         self.screen.reset()
 
         # draw snake
-        surface = pymlgame.Surface(self.width, self.height)
+        surface = pymlgame.Surface(self.screen.width, self.screen.height)
         for part in self.snake.parts:
             surface.draw_dot(part, pymlgame.RED)
         self.screen.blit(surface)
@@ -86,17 +81,17 @@ class Game(object):
 
         self.screen.update()
 
-        # accelerate every 5 points by 1 fps
-        self.clock.tick(5 + int(self.score / 5))
+        #TODO: accelerate every 5 points by 1 fps
+        self.clock.tick()
 
     def handle_events(self):
         """
         Loop through all events.
         """
-        for event in self.ctlr.get_events():
-            if event.type == pymlgame.NEWCTLR:
+        for event in pymlgame.get_events():
+            if event.type == pymlgame.E_NEWCTLR:
                 print('new ctlr with uid:', event.uid)
-            elif event.type == pymlgame.KEYDOWN:
+            elif event.type == pymlgame.E_KEYDOWN:
                 if event.button == pymlgame.CTLR_UP:
                     if self.snake.direction != DOWN:
                         self.snake.direction = UP
@@ -109,7 +104,7 @@ class Game(object):
                 elif event.button == pymlgame.CTLR_RIGHT:
                     if self.snake.direction != LEFT:
                         self.snake.direction = RIGHT
-            elif event.type == pymlgame.PING:
+            elif event.type == pymlgame.E_PING:
                 print('ping from', event.uid)
 
     def gameloop(self):
@@ -129,7 +124,7 @@ class Game(object):
             end = time.time() + 5
             while time.time() < end:
                 self.screen.reset()
-                surface = pymlgame.Surface(self.width, self.height)
+                surface = pymlgame.Surface(self.screen.width, self.screen.height)
                 #TODO: write score and highscore
                 #font = pymlgame.font('score: {}'.format(self.score),
                 #                     pymlgame.WHITE, pymlgame.BLACK)
@@ -147,15 +142,14 @@ class Game(object):
 
                 self.screen.blit(surface)
                 self.screen.update()
-                self.clock.tick(5)
+                self.clock.tick()
 
         except KeyboardInterrupt:
             pass
-        self.ctlr.quit()
 
     def generate_apple(self):
-        return (random.randrange(self.width),
-                random.randrange(self.height))
+        return (random.randrange(self.screen.width),
+                random.randrange(self.screen.height))
 
     def write_highscore(self):
         """
@@ -184,5 +178,6 @@ class Game(object):
 
 
 if __name__ == '__main__':
-    GAME = Game('127.0.0.1', 1337, 50, 28)
+    #GAME = Game('127.0.0.1', 1337)
+    GAME = Game('ml.jaseg.net', 1337)
     GAME.gameloop()
