@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 """
 Snake for Mate Light
@@ -21,11 +20,12 @@ import time
 import random
 
 import pymlgame
+from pymlgame.locals import *
 
 from snake import Snake, UP, DOWN, LEFT, RIGHT
 
 
-class Game(object):
+class Game:
     """
     The main game class that holds the gameloop.
     """
@@ -43,7 +43,7 @@ class Game(object):
         self.gameover = False
         self.apple = self.generate_apple()
         self.apple_surface = pymlgame.Surface(1, 1)
-        self.apple_surface.draw_dot((0, 0), pymlgame.GREEN)
+        self.apple_surface.draw_dot((0, 0), GREEN)
         self.oldapple = self.apple
         self.score = 0
         self.highscore = self.get_highscore()
@@ -69,7 +69,7 @@ class Game(object):
         # draw snake
         surface = pymlgame.Surface(self.screen.width, self.screen.height)
         for part in self.snake.parts:
-            surface.draw_dot(part, pymlgame.RED)
+            surface.draw_dot(part, pymlgame.locals.RED)
         self.screen.blit(surface)
 
         # draw apple
@@ -81,7 +81,7 @@ class Game(object):
 
         self.screen.update()
 
-        #TODO: accelerate every 5 points by 1 fps
+        # TODO: accelerate every 5 points by 1 fps
         self.clock.tick()
 
     def handle_events(self):
@@ -89,23 +89,24 @@ class Game(object):
         Loop through all events.
         """
         for event in pymlgame.get_events():
-            if event.type == pymlgame.E_NEWCTLR:
-                print('new ctlr with uid:', event.uid)
-            elif event.type == pymlgame.E_KEYDOWN:
-                if event.button == pymlgame.CTLR_UP:
+            if event.type == E_NEWCTLR:
+                print('new ctlr with id:', event.id)
+            elif event.type == E_KEYDOWN:
+                if event.button == CTLR_UP:
                     if self.snake.direction != DOWN:
                         self.snake.direction = UP
-                elif event.button == pymlgame.CTLR_DOWN:
+                elif event.button == CTLR_DOWN:
                     if self.snake.direction != UP:
                         self.snake.direction = DOWN
-                elif event.button == pymlgame.CTLR_LEFT:
+                elif event.button == CTLR_LEFT:
                     if self.snake.direction != RIGHT:
                         self.snake.direction = LEFT
-                elif event.button == pymlgame.CTLR_RIGHT:
+                elif event.button == CTLR_RIGHT:
                     if self.snake.direction != LEFT:
                         self.snake.direction = RIGHT
-            elif event.type == pymlgame.E_PING:
-                print('ping from', event.uid)
+            elif event.type == E_PING:
+                #print('ping from', event.id)
+                pass
 
     def gameloop(self):
         """
@@ -125,7 +126,7 @@ class Game(object):
             while time.time() < end:
                 self.screen.reset()
                 surface = pymlgame.Surface(self.screen.width, self.screen.height)
-                #TODO: write score and highscore
+                # TODO: write score and highscore
                 #font = pymlgame.font('score: {}'.format(self.score),
                 #                     pymlgame.WHITE, pymlgame.BLACK)
                 if self.score > self.highscore:
@@ -178,6 +179,6 @@ class Game(object):
 
 
 if __name__ == '__main__':
-    #GAME = Game('127.0.0.1', 1337)
-    GAME = Game('ml.jaseg.net', 1337)
+    GAME = Game('127.0.0.1', 1337)
+    #GAME = Game('ml.jaseg.net', 1337)
     GAME.gameloop()
